@@ -50,3 +50,35 @@ A real source ID or schema-valid response does not prove a claim is true. Keep f
 ## Hosted Groq compatibility checks
 
 The application now uses the report component through `groq_service.py`. With the application dependencies installed, run `python -m evals.check_groq --credentials .env.hosting.local` to evaluate the five synthetic development cases on its request format. This makes real Groq calls, uses the deployed 768-token output cap, spaces requests to respect the observed account output limit, records raw responses, and stops on provider errors. See [hosting validation](../docs/hosting.md) for results and limitations. The original Ollama experiments and runner remain unchanged.
+
+## Human review and the paired pilot
+
+New evaluation work follows [Hamel Husain and Shreya Shankar's methods](../docs/evaluation-method.md): inspect traces, collect human Pass/Fail judgments and critiques, derive a failure taxonomy, then validate any semantic judges against human references.
+
+The [20-case pilot corpus](corpus/README.md) has provisional AI-authored reference labels and no holdout claim. Run `python -m evals.pilot --prepare` for an offline request capture, or add `--credentials .env.hosting.local` without `--prepare` for a real paired Groq run. All requests are frozen before execution; the run alternates the order of the deployed and minimal instruction variants and retains errors.
+
+Start the local annotation interface with `python -m evals.review_app --run evals/runs/RUN_DIRECTORY`. It displays sources alongside the generated report, saves append-only local review events, and hides variant names and suggested labels in the primary view. Start by reviewing 30 traces yourself before using assistant suggestions. The page can be used while the rest of a run is still generating. Review journals are excluded from Git.
+
+Those initial judgments receive a second pass: the assistant checks them against source evidence and brings disputed cases back to the owner. Revisions preserve the original judgments; unresolved cases are excluded from references used to validate automated judges. This is an explicit discussion step, not an automatic feature of the review interface. See [label review](../docs/evaluation-method.md#check-labels-before-using-them-as-references).
+
+`python -m evals.scoring --run evals/runs/RUN_DIRECTORY` reports structural outcomes and four objective field comparisons against the provisional references. To include your judgments, also pass `--reviews PATH --reviewer NAME --criteria-version VERSION`. Different reviewers, reviewer kinds, and criteria versions are not combined. These field checks do not grade free-text faithfulness. Human review is the default; assistant review must be selected explicitly with `--reviewer-kind assistant` and remains provisional.
+
+`python -m evals.corpus_tools` regenerates provenance and coverage diagnostics without model calls. The pilot is heavily weighted toward missing priority/date values; the score report therefore separates results by expected field state.
+
+The first complete paired pilot is retained in [the trace bundle](published/20260908T160338Z-pilot/README.md), including its provider schema failure and explicit continuation of unattempted requests. Its [objective results](published/20260908T160338Z-pilot/objective-report.md) are provisional and separate from human semantic review. `evals.export_run` creates a local shareable bundle without making a network write.
+
+## Delegated assistant assessment
+
+The owner delegated all 40 reviews to the assistant. The [completed assessment](assessments/20260908T160338Z-pilot-assistant/report.md) contains 40 source-supported critiques, provisional Pass/Fail judgments, derived failure categories, original notes, and corrections. This supersedes waiting for initial human labels before engineering can continue. Human validation is still unperformed.
+
+```sh
+python -m evals.scoring --run evals/published/20260908T160338Z-pilot \
+  --reviews evals/assessments/20260908T160338Z-pilot-assistant/reviews.jsonl \
+  --reviewer codex-interactive-review --criteria-version assistant-v1 --reviewer-kind assistant
+python -m evals.render_assessment --run evals/published/20260908T160338Z-pilot \
+  --assessment evals/assessments/20260908T160338Z-pilot-assistant
+python -m evals.review_app --run evals/published/20260908T160338Z-pilot \
+  --assessment evals/assessments/20260908T160338Z-pilot-assistant
+```
+
+The renderer verifies source quotes, source/output identity, trace-file fingerprints, complete coverage, and review attribution before producing Markdown, HTML, and JSON summaries. Open `http://127.0.0.1:5003/assessment`. Assistant labels never enter the human journal or count as human alignment evidence. Both structural failures remain in the denominator.

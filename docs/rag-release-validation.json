@@ -1,0 +1,17 @@
+{
+  "release": "b310351c54c7",
+  "checks": {
+    "saved_report_reused": true,
+    "guidance_visible": true,
+    "direct_passages_labeled": true,
+    "source_links_visible": true,
+    "parts_still_unknown": true,
+    "new_model_calls": 0
+  },
+  "original_generation_seconds": 1.852,
+  "before_html_sha256": "df542d50fa53c68150b4fd89f4a400c30fb797793a2fc9511c94df00f84e8236",
+  "after_html_sha256": "8be0059803eff2a1c84855b2848c061d7dae53b70d5acb66541ec64f4480e0d7",
+  "first_smoke_check": "Missing guidance heading; response was not retained by the initial test script.",
+  "second_smoke_check": "Response retained: references were retrieved, but the model omitted a guidance summary.",
+  "fix": "Viewer displays saved reference passages when the model omits a summary; saved model output is unchanged."
+}

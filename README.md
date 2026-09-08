@@ -1,165 +1,111 @@
-# Frontline - Maintenance Report Generator
+# Frontline
 
-A lightweight FastHTML application that transforms unstructured frontline inputs (voice notes, text, images) into structured maintenance and inspection reports using AI.
+Maintenance reports with sources a reviewer can check.
 
-## Features
+Frontline turns written notes, recordings, and images into a draft maintenance report. It retrieves applicable manufacturer guidance, separates observations from completed work and proposals, and saves the sources behind each report.
 
-### Current Functionality ✅
-- **Workspace System**: Create and manage multiple workspaces for different projects
-- **Multi-Modal Input**: Drag-and-drop interface for audio (.webm/.mp3/.wav), text files, and images
-- **Live Audio Recording**: Record audio directly in the browser with WebM format
-- **AI-Powered Transcription**: Recorded audio transcribed through Groq Whisper
-- **Interactive Transcription Editing**: 
-  - Click-to-edit transcription previews with modal interface
-  - 500ms debounced auto-save for seamless editing
-  - Real-time updates across all views
-- **Unified Input Item Display**: Consistent presentation across workspace and all-inputs views
-- **Report Generation**: AI-powered maintenance report creation from processed inputs
-- **User Authentication**: Secure session-based authentication system
+**[Try the public demo](https://davidrussell.alwaysdata.net)** · [Report contract](docs/report-contract.md) · [Evaluation method](docs/evaluation-method.md) · [Hosting and operating guide](docs/hosting.md)
 
-### Technical Architecture
+![A synthetic inspection report showing source references and unknown fields](docs/images/frontline-report.png)
 
-- **Backend**: FastHTML (Python) with reactive components and HTMX integration
-- **Database**: SQLite with FastLite ORM for rapid prototyping
-- **Frontend**: HTMX for dynamic interactions, Hyperscript for client-side logic
-- **AI Integration**: Groq Qwen 3.8 27B and Whisper via httpx; source validation with Pydantic
-- **File Storage**: Organized local storage with audio/image/text separation
-- **State Management**: Window object pattern for persistent client-side state
+## The engineering problem
 
-## Getting Started
+A proposed replacement can become an invented repair in a fluent summary. An unrecorded quantity can become a confident number. A valid source ID can point to a passage that does not support the claim.
 
-### Prerequisites
-- Python 3.11+
-- Groq API key on the Free tier for live inference
+The report contract makes those distinctions explicit. Pydantic and additional checks enforce structure, consistent evidence states, valid source IDs, and literal identifiers. The source snapshot stays unchanged when someone edits the workspace later. Reviewer notes are separate from generated findings.
 
-### Installation
+These controls do not prove that every sentence is faithful. Semantic quality is reviewed separately; the initial review was delegated to the assistant and its limitations are recorded.
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+## What works now
 
-3. Set your Groq API key:
-   ```bash
-   export GROQ_API_KEY=your_api_key_here
-   ```
+- Separate visitor workspaces with a saved synthetic example and 24-hour expiry.
+- Text, audio, and image inputs; Groq Whisper transcription and Qwen image descriptions.
+- Background report generation with source citations, explicit unknown values, and visible disagreements.
+- Indexed manufacturer references, filtered by model/revision and access, with guidance displayed separately from recorded work.
+- Persistent quotas and cooldowns, bounded uploads, ownership checks, and restart recovery.
+- A reproducible report-component pilot and a local interface for reviewing sources and outputs side by side.
 
-4. Run the application:
-   ```bash
-   python main.py
-   ```
+The initial RAG library contains nine manufacturer-reference summaries covering Raspberry Pi 3 Model B+, 4, and 5. After entering the demo, choose **Try an example with manufacturer references**, then generate the gateway report. Unsupported or competing model information leaves the report grounded in the supplied notes. [Retrieval design and comparison](docs/reference-retrieval.md).
 
-5. Open your browser to `http://localhost:5001`
+## Evidence and limits
 
-For the public demo, deployment, limits, and validation results, see [the hosting guide](docs/hosting.md). Live reports preserve their source snapshots, unknown fields, and disagreements. The public demo gives each visitor a separate temporary workspace. Moondream bounding-box detection is an optional legacy feature installed through `requirements-vision.txt`; the public demo uses Groq image descriptions.
+The deployment check generated a report, transcribed a synthetic recording, and read a synthetic equipment label through the public URL. A controlled idle-cycle test confirmed that the process stopped, then woke in 1.19 seconds with its session, report, and upload intact. These are individual observations, not service-level guarantees. [Validation conditions](docs/hosting.md).
 
-The UI uses HTMX 4.0.0 through FastHTML's native `htmx4` support, FastHTML 0.14.13, FastLite 0.2.4, and MonsterUI 1.0.47. The theme is a fixed light palette with beige surfaces and brown accents. See [UI migration notes](docs/ui-migration.md) for version choices and compatibility changes.
+The original five development cases all passed the hosted structural checks. One still proposed an inspection beyond the recorded action, demonstrating why structural acceptance is insufficient. The expanded pilot has **20 synthetic input cases and 40 recorded paired traces**. At the owner's request, the assistant reviewed every output: **21 Pass / 19 Fail**, including four failures limited to completed-work section consistency. These judgments and initial field references are AI-authored and provisional; no human validation, held-out accuracy, or customer impact is claimed. [Full assistant assessment](evals/assessments/20260908T160338Z-pilot-assistant/report.md) · [Corpus and provenance](evals/corpus/README.md) · [Recorded pilot and objective results](evals/published/20260908T160338Z-pilot/objective-report.md).
 
-### First Steps
-1. Register a new account or login
-2. Create a new workspace or select an existing one
-3. Upload files via drag-and-drop or record audio directly
-4. For audio files, click "Transcribe Audio" to generate transcriptions
-5. Edit transcriptions by clicking on the preview text
-6. Click "Generate Report" to create an AI-powered maintenance report
-7. View and manage all your input items in the "View All Inputs" section
+The resulting instruction changes improved the assistant-reviewed outcome from **12/20 to 18/20** on those same development cases. All 20 new outputs passed structural validation and the four field checks. Two remaining interpretation/section errors are documented, including a new over-specific inspection claim. [Follow-up review and comparison limits](evals/assessments/20260908T220823Z-pilot-assistant/report.md).
 
-## Key Routes
+The separate retrieval study compares keyword overlap, BM25, and an applicability ablation on 20 development cases. The revised BM25 system returned a relevant top result in 12/12 answerable cases and abstained in 8/8 unsupported cases; precision at two passages was 0.708, exposing unnecessary extra context. Four retrieval-plus-generation examples also received explicit assistant reviews. [Retrieval study](docs/reference-retrieval.md) · [RAG traces and reviews](evals/published/20260908T223019Z-rag/assistant-review.json).
 
-### Content Routes (HTMX Fragments)
-- `GET /content/workspace` - Create new workspace  
-- `GET /content/workspace/{id}` - Load existing workspace
-- `GET /content/workspaces` - View all workspaces
-- `GET /content/inputs` - View all input items
-- `GET /content/view-input/{id}` - Individual input item view
-- `GET /content/reports` - View all reports
-- `GET /content/dashboard` - Analytics dashboard
+The evaluation workflow draws on Hamel Husain and Shreya Shankar: inspect traces, derive failure categories from critiques, build application-specific checks, and validate any model judge against human labels. The initial review was delegated to the assistant; that substitution is disclosed, and human alignment remains unestablished. Criteria and review revisions are preserved. [Method and primary references](docs/evaluation-method.md).
 
-### API Routes
-- `POST /upload` - Handle file uploads with workspace context
-- `POST /transcribe-audio/{id}` - Transcribe audio files
-- `PUT /update-transcription/{id}` - Update transcription with debounced saves
-- `DELETE /delete-input/{id}` - Delete input items
-- `POST /generate-report` - Generate AI report from workspace items
+## Run locally
 
-### Modal Routes
-- `GET /modal/edit-transcription/{id}` - Transcription editing modal
-- `GET /modal/add-input/{workspace_id}` - Add existing items to workspace modal
-- `GET /modal/close` - Close modal
-
-## Database Schema
-
-### Users
-- `id`, `username`, `email`, `password_hash`, `created_at`, `active`
-
-### Workspaces  
-- `id`, `user_id`, `name`, `created_at`, `updated_at`, `status`, `input_item_ids` (JSON array)
-
-### Input Items
-- `id`, `user_id`, `filename`, `original_filename`, `file_path`, `file_type`, `mime_type`, `file_size`, `transcription`, `extracted_data`, `processed`
-
-### Maintenance Reports
-- `id`, `workspace_id`, `user_id`, `title`, `description`, `equipment_id`, `part_numbers`, `defect_codes`, `corrective_action`, `priority`, `status`
-
-## Architecture Highlights
-
-### Key Patterns Implemented
-- **Unified Fragment Pattern**: Single `build_input_item_fragment()` function ensures consistent display across all views
-- **Out-of-Band Updates**: Real-time UI updates across multiple views using `hx_swap_oob="true"`
-- **Modal System**: Centralized modal container with backdrop click-to-close functionality
-- **Debounced Updates**: 500ms delay auto-save for smooth transcription editing
-- **Window Object State**: Client-side state persistence across HTMX navigation
-
-### Technology Choices
-- **FastHTML**: Rapid development with Python-native reactive components
-- **HTMX**: Dynamic interactions without complex JavaScript frameworks
-- **Hyperscript**: Declarative client-side logic for UI interactions
-- **SQLite + FastLite**: Simple, file-based database with ORM integration
-- **Groq APIs**: Qwen report generation and Whisper transcription with persistent usage limits
-- **WebM Audio**: Modern format with good browser support and Whisper compatibility
-
-### Deferred for Production
-- Advanced error handling and logging
-- Input validation and sanitization
-- Rate limiting and API quotas
-- Advanced UI/UX polish
-- Mobile-responsive design optimization
-- Unit and integration tests
-- Production deployment configuration
-- Advanced photo annotation tools
-- Real-time notifications
-
-## Evidence-backed reporting component
-
-The new [report component](docs/report-contract.md) separates observations, completed work, proposed actions, and unknown or disputed values, with source references and validation. It is integrated into the app's background generation workflow and evidence report view. Existing flat reports remain readable. Both local Ollama experiments and bounded Groq development checks are available under evals/.
-
-Run its offline tests from the repository root:
+Use Python 3.11 or later and install the application dependencies:
 
 ```sh
-uv run --project evals python -m unittest discover -s tests -p 'test_*.py' -v
+python -m pip install -r requirements.txt
 ```
 
-See [evaluation instructions and synthetic cases](evals/README.md) for preparation and local model runs.
+Set `GROQ_API_KEY` in your environment for live inference. Start a local demo with a separate runtime directory:
 
-With the application dependencies installed, the same unittest command also runs isolated registration, upload/edit, and page-loading smoke checks. Without those dependencies, the three app-stack checks are explicitly skipped.
+```sh
+FRONTLINE_DEMO=1 FRONTLINE_HTTPS_ONLY=0 FRONTLINE_DATA_DIR=/tmp/frontline-local-demo \
+  python -m uvicorn main:app --host 127.0.0.1 --port 5001
+```
 
-## Future Enhancements
-- Photo annotation with bounding boxes
-- Advanced analytics and trend analysis
-- Export functionality (PDF, CSV)
-- Integration with maintenance management systems
-- Mobile app development
-- Advanced AI prompt engineering
-- Multi-language support
+Open `http://127.0.0.1:5001`. The saved example can be explored without making a model request. `.env.hosting.local` is a private deployment-credential file and is not automatically loaded by the application.
 
-## Security Considerations
-- Password hashing with SHA-256
-- Session-based authentication
-- Input sanitization for file uploads
-- Secure file storage with unique filenames
-- Environment variable configuration for API keys
+The public deployment uses alwaysdata Free, a lightweight Python environment, and Groq Free. Some AI requests wait for shared capacity; uploads and report attempts are limited. See the [operating guide](docs/hosting.md) for exact limits, storage paths, deployment, and rollback.
 
----
+Legacy local registration/login and optional Moondream bounding-box detection remain available separately; install `requirements-vision.txt` only for that legacy feature. Public image descriptions are not represented as bounding-box detection.
 
-Built with ❤️ using FastHTML in under 20 hours.
+## Run checks and review traces
+
+The deterministic suite makes no live model requests:
+
+```sh
+python -m unittest discover -s tests -p 'test_*.py'
+python -m evals.corpus_tools
+python -m evals.pilot --prepare
+python -m evals.check_retrieval --output /tmp/frontline-retrieval-check
+```
+
+The paired pilot uses the same model, source packet, schema, validation, and decoding settings for both variants; only the system instruction differs. A real run consumes Groq quota and deliberately spaces requests:
+
+```sh
+python -m evals.pilot --credentials .env.hosting.local
+python -m evals.review_app --run evals/runs/RUN_DIRECTORY
+```
+
+Open the local address printed by the review command. Enter your name, mark Pass or Fail, and add a brief critique. Begin with 30 personal reviews before using assistant suggestions. Reviews save locally with append-only history and can be exported. No automatic label is presented as a human judgment.
+
+`evals.scoring` reports structural outcomes and objective field comparisons, with known and unknown cases separated. Human semantic results require a selected reviewer and criteria version. The prepared GitHub Actions workflow runs only the deterministic checks and offline request preparation.
+
+To inspect the completed assistant review without making model calls:
+
+```sh
+python -m evals.render_assessment --run evals/published/20260908T160338Z-pilot \
+  --assessment evals/assessments/20260908T160338Z-pilot-assistant
+python -m evals.review_app --run evals/published/20260908T160338Z-pilot \
+  --assessment evals/assessments/20260908T160338Z-pilot-assistant
+```
+
+Open `http://127.0.0.1:5003/assessment`. The assessment is read-only and separate from the optional human-review journal.
+
+## Project layout
+
+| Location | Responsibility |
+|---|---|
+| `main.py`, `models.py`, `static/app.js` | FastHTML/HTMX interface, data records, and interaction |
+| `reporting.py`, `report-instructions.txt` | Report contract and validation |
+| `groq_service.py`, `report_workflow.py` | Provider calls, frozen source snapshots, and background jobs |
+| `hosting_runtime.py`, `deploy/` | Storage boundaries, quotas, and deployment |
+| `evals/corpus/`, `evals/pilot.py` | Versioned inputs and paired request capture |
+| `evals/review_app.py`, `evals/scoring.py` | Human review and objective evaluation |
+| `evals/assessments/`, `evals/render_assessment.py` | Attributed assistant judgments, source evidence, and reproducible review reports |
+| `retrieval.py`, `reference-data/` | Versioned manufacturer passages, applicability filters, and ranked retrieval |
+
+The interface uses HTMX 4, FastHTML, and MonsterUI with a beige and brown theme. [Version and migration notes](docs/ui-migration.md).
+
+Remaining work includes broader source families, the two recorded report errors, more selective context, and operational quality monitoring.

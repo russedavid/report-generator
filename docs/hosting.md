@@ -108,3 +108,14 @@ To repeat the bounded component check using the same request builder:
 It makes real Groq requests, spaces the cases to respect the output allowance, records requests/responses and code snapshots, and stops on provider errors. The saved example was generated from the earlier successful synthetic compatibility request and is explicitly labeled as a saved example.
 
 The broader provider comparison and its public sources are in [free-hosting-research.md](free-hosting-research.md).
+
+
+## RAG release validation — September 8, 2026
+
+Release `b310351c54c7` adds indexed manufacturer references and the guidance-display fallback. The prepared application matched the committed source before deployment. The Linux environment supports SQLite FTS5 and JSON functions; the Python environment remains approximately 106 MB and the application release approximately 512 KB.
+
+The local offline suite passes 63 tests. The 13 hosting checks also passed in the alwaysdata environment. An existing visitor session and saved report survived the update. A public gateway example completed generation in 1.852 seconds; this is one observation, not a latency guarantee.
+
+Two initial smoke checks looked for a guidance heading. The first script failed before retaining its response, so that observation is incomplete. The second retained response showed that retrieval and source links worked while the model omitted a guidance summary. The viewer was corrected to display the saved reference passages explicitly when a summary is absent. Rechecking that same saved report verified the fix without another model call or alteration of the saved model output. [Recorded validation](rag-release-validation.json).
+
+The original model outputs, the initial retrieval failure, and both retrieval comparisons remain in the evaluation artifacts. [Retrieval design and limitations](reference-retrieval.md).
