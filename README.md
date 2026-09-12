@@ -4,7 +4,7 @@ Maintenance reports with sources a reviewer can check.
 
 Frontline turns written notes, recordings, and images into a draft maintenance report. It retrieves applicable manufacturer guidance, separates observations from completed work and proposals, and saves the sources behind each report.
 
-**[Try the public demo](https://davidrussell.alwaysdata.net)** · [Report contract](docs/report-contract.md) · [Evaluation method](docs/evaluation-method.md) · [Hosting and operating guide](docs/hosting.md)
+**[Try the public demo](https://davidrussell.alwaysdata.net)** · [Source repository](https://github.com/russedavid/report-generator) · [Report contract](docs/report-contract.md) · [Evaluation method](docs/evaluation-method.md) · [Hosting and operating guide](docs/hosting.md)
 
 ![A synthetic inspection report showing source references and unknown fields](docs/images/frontline-report.png)
 

@@ -3,7 +3,7 @@
 ================================================================================
 
 PROJECT: FastHTML Maintenance Report Application
-REPOSITORY: https://github.com/russedavid/fastdemo
+REPOSITORY: https://github.com/russedavid/report-generator
 DEMO VIDEO: [5-minute Loom recording walkthrough]
 
 ================================================================================
