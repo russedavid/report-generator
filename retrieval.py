@@ -17,6 +17,9 @@ MODELS = {
 }
 STOP_WORDS = {"a", "an", "the", "and", "or", "of", "to", "for", "in", "on", "at", "by", "from", "with", "its", "it", "i", "we", "is", "was", "were", "be", "been", "this", "that", "as", "no", "not", "has", "have", "had", "during", "recorded", "report", "unit", "gateway", "raspberry", "pi", "model", "degrees", "celsius", "equipment", "use", "uses", "used", "repair", "maintenance"}
 COMPONENT_TERMS = {"fan", "fans", "gpu", "arm", "cpu", "usb", "hub", "hubs", "kernel", "vcgencmd"}
+ELIGIBILITY = """p.status='current' AND (p.owner_id IS NULL OR p.owner_id=?)
+    AND EXISTS (SELECT 1 FROM json_each(p.models) WHERE value=?)
+    AND (p.revision IS NULL OR p.revision=?)"""
 
 
 def digest(value):
@@ -100,9 +103,7 @@ class ReferenceIndex:
             return []
         components = set(terms) & COMPONENT_TERMS
         limit = max(1, min(int(limit), 4))
-        eligibility = """p.status='current' AND (p.owner_id IS NULL OR p.owner_id=?)
-            AND EXISTS (SELECT 1 FROM json_each(p.models) WHERE value=?)
-            AND (p.revision IS NULL OR p.revision=?)"""
+        eligibility = ELIGIBILITY
         params = (None if actor is None else str(actor), model, revision)
         with closing(sqlite3.connect(self.path)) as connection:
             if method == "bm25":
@@ -127,7 +128,18 @@ class ReferenceIndex:
                 rows = sorted(scored, key=lambda row: (row[1], json.loads(row[0])["id"]))[:limit]
         return [dict(json.loads(payload), retrieval_score=score) for payload, score in rows]
 
-    def enrich(self, sources, actor, max_chars=9000):
+    def lookup(self, passage_id, *, model, revision=None, actor=None):
+        """Resolve supporting context with exactly the same eligibility as search."""
+        if not model:
+            return None
+        with closing(sqlite3.connect(self.path)) as connection:
+            row = connection.execute(
+                "SELECT p.payload FROM passages p WHERE p.id=? AND " + ELIGIBILITY,
+                (passage_id, None if actor is None else str(actor), model, revision),
+            ).fetchone()
+        return dict(json.loads(row[0]), retrieval_score=None) if row else None
+
+    def enrich(self, sources, actor, max_chars=9000, *, selection_policy="top_two", dependencies=None):
         started = time.perf_counter()
         context = source_context(sources)
         trace = {**context, "method": "sqlite_fts5_bm25", "corpus_sha256": self.corpus_sha256,
@@ -135,7 +147,16 @@ class ReferenceIndex:
         if context["status"] != "known_model":
             return sources, dict(trace, elapsed_ms=round((time.perf_counter() - started) * 1000, 3))
         text = "\n".join(s["text"] for s in sources)
-        candidates = self.search(text, model=context["model"], revision=context["revision"], actor=actor)
+        if selection_policy == "top_two":
+            candidates = self.search(text, model=context["model"], revision=context["revision"], actor=actor)
+        else:
+            from context_selection import select_context
+            candidates, selection = select_context(
+                self, text, model=context["model"], revision=context["revision"], actor=actor,
+                policy=selection_policy, dependencies=dependencies,
+                max_chars=max(0, max_chars - sum(len(s["text"]) for s in sources)),
+            )
+            trace["selection"] = selection
         result = list(sources)
         remaining = max_chars - sum(len(s["text"]) for s in sources)
         used_ids = {s["id"] for s in sources}
