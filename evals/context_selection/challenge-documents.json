@@ -1,0 +1,182 @@
+[
+  {
+    "version": "synthetic-challenge-v1",
+    "license": "CC0-1.0",
+    "attribution": "Assistant-authored fictional test material",
+    "url": "https://example.invalid/context-selection",
+    "section": "Fictional test only",
+    "sha256": "synthetic",
+    "status": "current",
+    "owner_id": null,
+    "revision": null,
+    "keywords": "",
+    "id": "ASTER-RESET",
+    "models": [
+      "aster-controller"
+    ],
+    "title": "Reset sequence",
+    "text": "Reset sequence: hold the amber switch for three seconds."
+  },
+  {
+    "version": "synthetic-challenge-v1",
+    "license": "CC0-1.0",
+    "attribution": "Assistant-authored fictional test material",
+    "url": "https://example.invalid/context-selection",
+    "section": "Fictional test only",
+    "sha256": "synthetic",
+    "status": "current",
+    "owner_id": null,
+    "revision": null,
+    "keywords": "",
+    "id": "ASTER-POWER",
+    "models": [
+      "aster-controller"
+    ],
+    "title": "Supply specification",
+    "text": "Supply specification: use the marked direct-current input."
+  },
+  {
+    "version": "synthetic-challenge-v1",
+    "license": "CC0-1.0",
+    "attribution": "Assistant-authored fictional test material",
+    "url": "https://example.invalid/context-selection",
+    "section": "Fictional test only",
+    "sha256": "synthetic",
+    "status": "current",
+    "owner_id": null,
+    "revision": null,
+    "keywords": "",
+    "id": "BOREAL-COOL",
+    "models": [
+      "boreal-unit"
+    ],
+    "title": "Cooling offset",
+    "text": "Cooling behavior reduces speed below the rising thresholds by the stated offset."
+  },
+  {
+    "version": "synthetic-challenge-v1",
+    "license": "CC0-1.0",
+    "attribution": "Assistant-authored fictional test material",
+    "url": "https://example.invalid/context-selection",
+    "section": "Fictional test only",
+    "sha256": "synthetic",
+    "status": "current",
+    "owner_id": null,
+    "revision": null,
+    "keywords": "",
+    "id": "BOREAL-RISE",
+    "models": [
+      "boreal-unit"
+    ],
+    "title": "Rising thresholds",
+    "text": "Rising speed thresholds are defined by the three configuration bands."
+  },
+  {
+    "version": "synthetic-challenge-v1",
+    "license": "CC0-1.0",
+    "attribution": "Assistant-authored fictional test material",
+    "url": "https://example.invalid/context-selection",
+    "section": "Fictional test only",
+    "sha256": "synthetic",
+    "status": "current",
+    "owner_id": null,
+    "revision": null,
+    "keywords": "",
+    "id": "CYGNUS-MAIN",
+    "models": [
+      "cygnus-unit"
+    ],
+    "title": "Calibration procedure",
+    "text": "Calibration procedure requires the internal reference values."
+  },
+  {
+    "version": "synthetic-challenge-v1",
+    "license": "CC0-1.0",
+    "attribution": "Assistant-authored fictional test material",
+    "url": "https://example.invalid/context-selection",
+    "section": "Fictional test only",
+    "sha256": "synthetic",
+    "status": "current",
+    "owner_id": "alice",
+    "revision": null,
+    "keywords": "",
+    "id": "CYGNUS-PRIVATE",
+    "models": [
+      "cygnus-unit"
+    ],
+    "title": "Internal reference values",
+    "text": "Internal reference values for the calibration procedure."
+  },
+  {
+    "version": "synthetic-challenge-v1",
+    "license": "CC0-1.0",
+    "attribution": "Assistant-authored fictional test material",
+    "url": "https://example.invalid/context-selection",
+    "section": "Fictional test only",
+    "sha256": "synthetic",
+    "status": "current",
+    "owner_id": null,
+    "revision": null,
+    "keywords": "",
+    "id": "DRACO-MAIN",
+    "models": [
+      "draco-unit"
+    ],
+    "title": "Recovery procedure",
+    "text": "Recovery procedure uses the documented timeout bounds."
+  },
+  {
+    "version": "synthetic-challenge-v1",
+    "license": "CC0-1.0",
+    "attribution": "Assistant-authored fictional test material",
+    "url": "https://example.invalid/context-selection",
+    "section": "Fictional test only",
+    "sha256": "synthetic",
+    "status": "revoked",
+    "owner_id": null,
+    "revision": null,
+    "keywords": "",
+    "id": "DRACO-REVOKED",
+    "models": [
+      "draco-unit"
+    ],
+    "title": "Timeout bounds",
+    "text": "Timeout bounds withdrawn after a procedure revision."
+  },
+  {
+    "version": "synthetic-challenge-v1",
+    "license": "CC0-1.0",
+    "attribution": "Assistant-authored fictional test material",
+    "url": "https://example.invalid/context-selection",
+    "section": "Fictional test only",
+    "sha256": "synthetic",
+    "status": "current",
+    "owner_id": null,
+    "revision": "A",
+    "keywords": "",
+    "id": "ERIS-A",
+    "models": [
+      "eris-unit"
+    ],
+    "title": "Alarm A17",
+    "text": "Alarm A17 is a relay warning."
+  },
+  {
+    "version": "synthetic-challenge-v1",
+    "license": "CC0-1.0",
+    "attribution": "Assistant-authored fictional test material",
+    "url": "https://example.invalid/context-selection",
+    "section": "Fictional test only",
+    "sha256": "synthetic",
+    "status": "current",
+    "owner_id": null,
+    "revision": "B",
+    "keywords": "",
+    "id": "ERIS-B",
+    "models": [
+      "eris-unit"
+    ],
+    "title": "Alarm A17",
+    "text": "Alarm A17 is a clock warning."
+  }
+]

@@ -1,0 +1,90 @@
+[
+  {
+    "id": "CS-01",
+    "family": "aster",
+    "query": "Reset sequence amber switch",
+    "model": "aster-controller",
+    "expected_ids": [
+      "ASTER-RESET"
+    ]
+  },
+  {
+    "id": "CS-02",
+    "family": "aster",
+    "query": "Reset sequence and supply specification",
+    "model": "aster-controller",
+    "expected_ids": [
+      "ASTER-RESET",
+      "ASTER-POWER"
+    ]
+  },
+  {
+    "id": "CS-03",
+    "family": "boreal",
+    "query": "Cooling offset below rising thresholds",
+    "model": "boreal-unit",
+    "expected_ids": [
+      "BOREAL-COOL",
+      "BOREAL-RISE"
+    ]
+  },
+  {
+    "id": "CS-04",
+    "family": "cygnus",
+    "query": "Calibration procedure",
+    "model": "cygnus-unit",
+    "actor": "bob",
+    "expected_ids": [],
+    "reason": "Required reference is inaccessible; do not pass on an incomplete procedure."
+  },
+  {
+    "id": "CS-05",
+    "family": "cygnus",
+    "query": "Calibration procedure",
+    "model": "cygnus-unit",
+    "actor": "alice",
+    "expected_ids": [
+      "CYGNUS-MAIN",
+      "CYGNUS-PRIVATE"
+    ]
+  },
+  {
+    "id": "CS-06",
+    "family": "draco",
+    "query": "Recovery procedure",
+    "model": "draco-unit",
+    "expected_ids": [],
+    "reason": "Required timeout reference is revoked."
+  },
+  {
+    "id": "CS-07",
+    "family": "eris",
+    "query": "Alarm A17",
+    "model": "eris-unit",
+    "revision": "B",
+    "expected_ids": [
+      "ERIS-B"
+    ]
+  },
+  {
+    "id": "CS-08",
+    "family": "eris",
+    "query": "Alarm A17",
+    "model": "eris-unit",
+    "expected_ids": []
+  },
+  {
+    "id": "CS-09",
+    "family": "aster",
+    "query": "Unknown zephyr calibration",
+    "model": "aster-controller",
+    "expected_ids": []
+  },
+  {
+    "id": "CS-10",
+    "family": "aster",
+    "query": "Supply specification",
+    "model": null,
+    "expected_ids": []
+  }
+]

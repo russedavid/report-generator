@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "RP-PI5-HYST": [
+      "RP-PI5-FAN"
+    ]
+  },
+  "basis": "The cooling-offset passage references the warming thresholds defined in RP-PI5-FAN. This is authored structural metadata, not a ranking-label exception.",
+  "source_corpus_sha256": "9c74147f5d529ea2f0e73e913aa360e80a3d35dcad2ff9162a7852e5126a37a7"
+}

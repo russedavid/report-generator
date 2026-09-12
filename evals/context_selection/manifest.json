@@ -1,0 +1,22 @@
+{
+  "name": "context-selection-v1",
+  "created": "2026-09-12",
+  "label_kind": "provisional_assistant",
+  "challenge_families": [
+    "aster",
+    "boreal",
+    "cygnus",
+    "draco",
+    "eris"
+  ],
+  "policy_frozen_before_results": true,
+  "independent_human_review": false,
+  "files": {
+    "challenge-documents.json": "06e38d601cd4020ef7653638e18fe71c0fe1a205be8538b3823761f90ee7bbc9",
+    "challenge-cases.json": "cba7389dfd5ebb67f9b40629ae9b5a434c1d9d809089c2629911af598923172e",
+    "manufacturer-dependencies.json": "ee3fc5e6502f534328bfaa42ed0e5ef9c8afbaceb814ff294e281ea4dde375f0",
+    "challenge-dependencies.json": "eb9c3d93bb0b8e7ba90c27619f8bcf72c684028ddcb031c0e7fa9308308dcf4c",
+    "protocol.md": "66d78c0a4c98fc62cf3c4fd61b8b38569a72c2a28c704543c7d844269d39acd0"
+  },
+  "interpretation": "Separate frozen synthetic challenge families; no field-accuracy or human-validation claim."
+}
