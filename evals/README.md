@@ -82,3 +82,9 @@ python -m evals.review_app --run evals/published/20260908T160338Z-pilot \
 ```
 
 The renderer verifies source quotes, source/output identity, trace-file fingerprints, complete coverage, and review attribution before producing Markdown, HTML, and JSON summaries. Open `http://127.0.0.1:5003/assessment`. Assistant labels never enter the human journal or count as human alignment evidence. Both structural failures remain in the denominator.
+
+## Context selection and release recovery
+
+`python -m evals.context_recovery --prepare --output /tmp/context-study` prepares a frozen two-policy comparison and isolated staging snapshots without inference. Omit `--prepare` and supply credentials to make the 19 planned Groq calls. The [study protocol](context_selection/protocol.md) defines the cases, boundaries, and decision rule; [recorded findings](../docs/context-selection-results.md) explain why the current top-two default was retained.
+
+`python -m evals.context_watch --run RUN_DIRECTORY --restore-staging` observes objective failures and can restore only that study's staging configuration. It does not deploy application code or alter the live demo. `python -m evals.context_report --run RUN_DIRECTORY` creates a readable summary with links to individual traces. The existing review app supports this dataset with `--dataset-snapshot study-cases.json`; human annotations still use their own local journal.

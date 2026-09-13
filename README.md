@@ -39,6 +39,8 @@ The separate retrieval study compares keyword overlap, BM25, and an applicabilit
 
 The evaluation workflow draws on Hamel Husain and Shreya Shankar: inspect traces, derive failure categories from critiques, build application-specific checks, and validate any model judge against human labels. The initial review was delegated to the assistant; that substitution is disclosed, and human alignment remains unestablished. Criteria and review revisions are preserved. [Method and primary references](docs/evaluation-method.md).
 
+The [context-selection and recovery study](docs/context-selection-results.md) found that a narrower context policy improved short-query precision but lost supporting references in full maintenance notes, so the top-two default remains. An isolated reference-metadata fault passed report-format checks but failed applicability checks; a staging observer restored the original configuration and index. These are controlled experiments, not changes to the public deployment.
+
 ## Run locally
 
 Use Python 3.11 or later and install the application dependencies:

@@ -79,7 +79,7 @@ def render(run, review_url='http://127.0.0.1:5004'):
     content+=f'<p><strong>{len(rows)}/{manifest["planned_requests"]} responses recorded.</strong> Candidate decision: {esc(decision["candidate_disposition"])}. Human calibration is not claimed.</p>'
     content+='<p>The candidate takes the first ranked passage plus declared dependencies. The baseline takes the top two. Scores and omissions below remain separate; a schema-valid report can still lack necessary context.</p>'
     content+='<h2>Retrieval before generation</h2>'+table(['Set','Policy','Complete','Precision','Recall','Selected characters'],[[esc(r['split']),esc(r['policy']),f'{r["complete"]}/{r["cases"]}',number(r['precision']),number(r['recall']),r['selected_characters']] for r in stats])
-    content+='<p class="note">The original 20 cases are development data. The ten challenge cases use five fictional source families frozen before this comparison. These are assistant-authored labels, not a field distribution or independent human assessment.</p>'
+    content+='<p class="note">The original 20 cases are development data. The ten challenge cases use five fictional source families frozen before this comparison. Precision is relevant selected passages divided by selected passages; recall uses the expected relevant set. These are assistant-authored labels, not a field distribution or independent human assessment.</p>'
     content+='<h2>Generated-report comparison</h2>'+table(['Policy','HTTP 200','Valid structure','Fields correct','Required references present','Median HTTP seconds','Input tokens','Output tokens'],[[esc(r['policy']),f'{r["http_200"]}/{r["responses"]}',r['structurally_accepted'],r['field_passes'],r['reference_complete'],number(r['median_http_seconds']),r['reported_input_tokens'],r['reported_output_tokens']] for r in summaries])
     content+='<p class="note">Two rounds over four scenarios; not eight independent situations. HTTP timing excludes selection, UI and rate-limit spacing. Tokens are provider-reported; no dollar cost is inferred. Known fields do not grade free-text faithfulness.</p>'
     content+='<h2>Staged release recovery</h2>'+table(['Phase','HTTP','Structure','Wrong-applicability IDs','Objective checks'],[[esc(r['variant']),esc(r['http_status']),esc(r['structure']),esc(', '.join(r['retrieval']['wrong_applicability']) or 'none'),'pass' if r['objective_pass'] else 'fail'] for r in recovery])
@@ -87,6 +87,11 @@ def render(run, review_url='http://127.0.0.1:5004'):
         transitions=json.loads((run/'release-transitions.json').read_text())
         content+='<details><summary>Exact release IDs, activation time, and preserved reports</summary><pre>'+esc(json.dumps(transitions,indent=2))+'</pre></details>'
     content+='<p class="note">The deliberately corrupted metadata is used only in a local staging snapshot. This is a scripted configuration rollback, not production downtime or an autonomous deployment system. Applicability is checked against the original unchanged reference authority.</p>'
+    if (run/'monitor-events.jsonl').exists():
+        events=[json.loads(line) for line in (run/'monitor-events.jsonl').read_text().splitlines()]
+        restores=[e for e in events if e['event']=='staging_restored']
+        content+='<details><summary>Staging observer and restore event</summary><pre>'+esc(json.dumps(restores,indent=2))+'</pre><p class="note">The observer was started after the regression response existed. Its restore duration measures local pointer/index work, not detection latency or production MTTR.</p></details>'
+    content+='<p class="note">Assistant verdicts assess report faithfulness. Initial labels that conflated missing context with unfaithful prose are retained separately; context failures were not erased by the scope correction.</p>'
     content+='<h2>Trace-by-trace review</h2><p>Open a trace for the original source packet, generated report, request, retrieval metadata and local annotation controls. Assistant critiques are separate from your review journal.</p>'
     for r in rows:
         link=review_url+'/?trace='+quote(r['trace_id'])
