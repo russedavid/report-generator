@@ -23,7 +23,7 @@ FILES = [
     "main.py", "models.py", "utils.py", "css.py", "ai_services.py", "reporting.py",
     "report-instructions.txt", "hosting_runtime.py", "groq_service.py", "report_workflow.py",
     "report_views.py", "requirements.txt", "demo-data/sample-report.json", "static/app.js",
-    "retrieval.py", "reference-data/passages-v1.jsonl", "reference-data/manifest.json",
+    "retrieval.py", "context_selection.py", "reference-data/passages-v1.jsonl", "reference-data/manifest.json",
 ]
 
 

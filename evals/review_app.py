@@ -1,6 +1,7 @@
 """Local, append-only trace review. No model calls or automatic human labels."""
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -24,7 +25,7 @@ from evals.trace_data import (
 HERE = Path(__file__).resolve().parent
 
 
-def make_app(run_dir, journal, test_mode=False, assessment=None):
+def make_app(run_dir, journal, test_mode=False, assessment=None, dataset_snapshot=None):
     run_dir, journal = Path(run_dir).resolve(), Path(journal).resolve()
     manifest_bytes = (run_dir / "manifest.json").read_bytes()
     manifest = json.loads(manifest_bytes)
@@ -34,7 +35,13 @@ def make_app(run_dir, journal, test_mode=False, assessment=None):
     run_id = run_dir.name
     journal.parent.mkdir(parents=True, exist_ok=True)
     write_lock = threading.Lock()
-    dataset_hash = manifest["artifacts"]["evals/corpus/pilot-v1.jsonl"]
+    if dataset_snapshot is not None:
+        snapshot = (run_dir / dataset_snapshot).resolve()
+        if not snapshot.is_relative_to(run_dir) or not snapshot.is_file():
+            raise ValueError("The dataset snapshot must belong to this run")
+        dataset_hash = hashlib.sha256(snapshot.read_bytes()).hexdigest()
+    else:
+        dataset_hash = manifest["artifacts"]["evals/corpus/pilot-v1.jsonl"]
     assessment_report = None
     if assessment is not None:
         assessment = Path(assessment).resolve()
@@ -94,6 +101,7 @@ def make_app(run_dir, journal, test_mode=False, assessment=None):
         result = {k: value.get(k) for k in (
             "trace_id", "input_sources", "raw_output", "output_sha256", "request",
             "http_status", "structural_status", "validation_error", "elapsed_seconds", "usage",
+            "retrieval", "release_id", "transition",
         )}
         result.update(raw_output=output_text(value), output_sha256=output_fingerprint(value),
                       structural_status=structural_outcome(value),
@@ -164,9 +172,10 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=5003)
     parser.add_argument("--test-mode", action="store_true")
     parser.add_argument("--assessment", type=Path, help="Serve a separate, read-only assistant assessment")
+    parser.add_argument("--dataset-snapshot", type=Path, help="Dataset file inside the run, for non-pilot studies")
     args = parser.parse_args()
     journal = args.journal or HERE / "reviews" / (args.run.name + ".jsonl")
     print("Review: http://127.0.0.1:" + str(args.port), flush=True)
     print("Journal: " + str(journal), flush=True)
-    uvicorn.run(make_app(args.run, journal, test_mode=args.test_mode, assessment=args.assessment),
+    uvicorn.run(make_app(args.run, journal, test_mode=args.test_mode, assessment=args.assessment, dataset_snapshot=args.dataset_snapshot),
                 host="127.0.0.1", port=args.port, log_level="warning")

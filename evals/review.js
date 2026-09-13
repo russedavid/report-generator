@@ -66,6 +66,7 @@
     $('trace').textContent = JSON.stringify({request:current.request,http_status:current.http_status,
       structural_status:current.structural_status,validation_error:current.validation_error,
       provider_error:current.provider_error,
+      retrieval:current.retrieval,release_id:current.release_id,transition:current.transition,
       elapsed_seconds:current.elapsed_seconds,usage:current.usage},null,2);
     const prior = listing.labels[current.trace_id];
     $('critique').value = prior?.critique || '';
@@ -81,7 +82,8 @@
     $('assessment-link').hidden = !listing.assistant_assessment_url;
     $('progress-text').textContent = (listing.test_mode ? 'UI test — ' : '') + listing.human_reviewed + ' human reviews · ' + listing.ready.length + '/' + listing.planned + ' traces ready';
     $('progress').max = listing.planned; $('progress').value = listing.human_reviewed;
-    const remembered = selected || localStorage.getItem('frontline-review-position-' + listing.run_id);
+    const linkedTrace = !keep ? new URLSearchParams(location.search).get('trace') : null;
+    const remembered = selected || linkedTrace || localStorage.getItem('frontline-review-position-' + listing.run_id);
     position = Math.max(0, listing.ready.indexOf(remembered));
     await show(position);
   }
